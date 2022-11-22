@@ -1,0 +1,22 @@
+.my-jumbo {
+    min-height: 100vh;
+}
+
+.my-crop-form {}
+
+.mb {
+    margin-bottom: 1.5rem;
+}
+
+.my-thumbnail {
+    width: 170px !important;
+}
+
+.blog-card-container {
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+.my-card {
+    height: 500px;
+}

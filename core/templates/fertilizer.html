@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>Smart Farming</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- style css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <!-- fevicon -->
+    <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{% static ' css/jquery.mCustomScrollbar.min.css' %}">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!-- owl stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/my-styles.css' %}">
+    <link rel="stylesheet"
+        href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css' %}"
+        media="screen">
+    <style>
+        .styled-table-sachin {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .styled-table-sachin thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table-sachin th,
+        .styled-table-sachin td {
+            padding: 12px 15px;
+        }
+
+        .styled-table-sachin tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table-sachin tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table-sachin tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .styled-table-sachin tbody tr.active-row-sachin {
+            font-weight: bold;
+            color: #009879;
+        }
+    </style>
+</head>
+<!-- body -->
+
+<body class="main-layout">
+    {% include 'header.html' %}
+    <div class="jumbotron jumbotron-fluid my-jumbo">
+        <div class="container">
+            {% if ans %}
+            <div class="alert alert-success" role="alert">
+                <h1 class="alert-heading">Our Prediction is {{ans|capfirst}}</h4>
+                    <p>{{fertObj.description}}</p>
+                    <hr>
+                    <p class="mb-0">Further Steps ?? Read Articles about Fertilizer </p>
+                    <a href="/blogs" style="color: blue;">Read Blogs about {{ans|capfirst}}</a>
+            </div>
+            {% endif %}
+            <h1 class="card-header text-center mb">Welcome to Fertilizer Recommendation System</h1>
+            <form action="{% url 'fertilizer' %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="temperature">Temperature</label>
+                    <input type="text" class="form-control" id="temperature" placeholder="Temperature" name="temp">
+                </div>
+                <div class="form-group">
+                    <label for="humidity">Humidity</label>
+                    <input type="text" class="form-control" id="humidity" placeholder="Humidity" name="hum">
+                </div>
+                <div class="form-group">
+                    <label for="mositure">Moisture</label>
+                    <input type="text" class="form-control" id="mositure" placeholder="Moisture" name="moisture">
+                </div>
+                <div class="form-group">
+                    <label for="soil-type">Soil Type</label>
+                    <select class="custom-select form-control" name="soil">
+                        <!-- <option selected>Enter the Soil Type</option> -->
+                        <option value="0">Black</option>
+                        <option value="1">Clayey</option>
+                        <option value="2">Loamy</option>
+                        <option value="3">Red</option>
+                        <option value="4">Sandy</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="soil-type">Crop Type</label>
+                    <select class="custom-select form-control" name="crop">
+                        <option value="0">Barley</option>
+                        <option value="1">Cotton</option>
+                        <option value="2">Ground Nuts</option>
+                        <option value="3">Maize</option>
+                        <option value="4">Millets</option>
+                        <option value="5">Oil seeds</option>
+                        <option value="6">Paddy</option>
+                        <option value="7">Pulses</option>
+                        <option value="8">Sugarcane</option>
+                        <option value="9">Tobacco</option>
+                        <option value="10">Wheat</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nitrogen">Nitrogen</label>
+                    <input type="text" class="form-control" id="nitrogen" aria-describedby="nitrogen"
+                        placeholder="Nitrogen" name="N">
+                </div>
+                <div class="form-group">
+                    <label for="potassium">Potassium</label>
+                    <input type="text" class="form-control" id="potassium" placeholder="Potassium" name="K">
+                </div>
+                <div class="form-group">
+                    <label for="phosphorous">Phosphorous</label>
+                    <input type="text" class="form-control" id="phosphorous" placeholder="Phosphorous" name="P">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <br>
+            <br>
+            <br>
+            <h1 style="text-align: center;">Checkout the Recent Predictions</h1>
+            {% if prevFertilizers|length > 0 %}
+            <table class="styled-table-sachin">
+                <thead>
+                    <tr style="font-size: 16px;">
+                        <th>ID</th>
+                        <th>Nitrogen</th>
+                        <th>Phosphorous</th>
+                        <th>Potassium</th>
+                        <th>Temperature</th>
+                        <th>Humidity</th>
+                        <th>Moisture</th>
+                        <th>Soil</th>
+                        <th>Crop</th>
+                        <th>Fertilizer Predicted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in prevFertilizers %}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.nitrogen}}</td>
+                        <td>{{item.phosphorous}}</td>
+                        <td>{{item.potassium}}</td>
+                        <td>{{item.temperature}}</td>
+                        <td>{{item.humidity}}</td>
+                        <td>{{item.moisture}}</td>
+                        <td>{{item.soil}}</td>
+                        <td>{{item.crop}}</td>
+                        <td>{{item.fertilizer|capfirst}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+    <div class="copyright">
+        <div class="container">
+            <p>©2022 All Rights Reserved. Design By <a href="http://localhost:8000/">Sachin, Aartee, Dhananjay</a>
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>
