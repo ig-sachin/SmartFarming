@@ -13,7 +13,9 @@ urlpatterns = [
     path('plant/', views.plant, name="plant"),
     path('blogs/', views.blogs, name="blog"),
     path('submit-blog', views.submitBlog, name="submitBlog"),
-    path('blogs/<int:bid>/', views.view_blog, name="viewBlog")
+    path('blogs/<int:bid>/', views.view_blog, name="viewBlog"),
+    # path('push-crop-data/', views.pushCropData, name="pushCropData"),
+    path('crop-year-state-wise', views.showCropStateWise, name="pushCropData"),
 ]
 urlpatterns += static(settings.MEDIA_URL,
                               document_root=settings.MEDIA_ROOT)

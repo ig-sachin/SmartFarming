@@ -43,3 +43,12 @@ class PreviousFertilizerPred(models.Model):
     soil = models.CharField(max_length=100)
     crop = models.CharField(max_length=100)
     fertilizer=models.CharField(max_length=100)
+
+class CropState(models.Model):
+    stateName = models.CharField(max_length=200)
+    districtName = models.CharField(max_length=200)
+    cropYear = models.IntegerField()
+    season = models.CharField(max_length=200)
+    crop = models.CharField(max_length=200)
+    area = models.FloatField()
+    production = models.FloatField()
