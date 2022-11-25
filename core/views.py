@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
 import pickle
 from django.utils.datastructures import MultiValueDictKeyError
 import io
@@ -7,7 +7,12 @@ from PIL import Image
 import numpy as np
 from keras.preprocessing import image
 from keras.models import load_model
-from .models import Blog,CropInfo,PreviousCropPred,FertilizerInfo,PreviousFertilizerPred
+from .models import Blog,CropInfo,PreviousCropPred,FertilizerInfo,PreviousFertilizerPred,CropState
+from googlesearch import search
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
 # Create your views here.
 
@@ -160,7 +165,7 @@ def plant(request):
         img = img / 255
         # print("IMG4:", img)
         model = load_model("./models/Plant_AlexNetModel.hdf5")
-        print("Following is our prediction:")
+        # print("Following is our prediction:")
         prediction = model.predict(img)
         d = prediction.flatten()
         j = d.max()
@@ -168,10 +173,23 @@ def plant(request):
             if item == j:
                 class_name = li[index]
         # print("Our Prediction", class_name)
-        return render(request, "plant.html", {"ans": class_name})
+        query = class_name
+ 
+        searchData = search(query, num=10, stop=10, pause=2) 
+        searchData = list(searchData)
+        links = []
+        for s in searchData:
+            if (".jpg" in s) or (".JPG" in s) or (".png" in s) or (".PNG" in s) or (".jpeg" in s) or (".JPEG" in s) or (".gif" in s) or (".GIF" in s):
+                # print("--------------->",s)
+                continue
+            else:
+                # print("===============>",s)
+                links.append(s)
+
+        return render(request, "plant.html", {"ans": class_name,"searchData":links})
     else:
         return render(request, "plant.html", {})
-
+    
 def blogs(request):
     blogs = Blog.objects.all()
     # print(blogs)
@@ -241,3 +259,47 @@ def cropStateWise(request):
         print("----------------------> ",states)
         return render(request,'crop-state-wise.html',{"states":states,"crop":crop})
     return render(request,'crop-state-wise.html',{})
+
+# def pushCropData(request):
+#     # D:\\MajorProject\\State-Wise\\crop_production.csv
+#     df=pd.read_csv("D:\\MajorProject\\State-Wise\crop_production.csv")
+#     df.dropna(subset=["Production"],axis=0,inplace=True)
+#     for _,col in df.iterrows():
+#         state_name = col['State_Name'] 
+#         district_name = col['District_Name']
+#         crop_year = col['Crop_Year']
+#         season_f = col['Season']
+#         crop_f = col['Crop']
+#         area_f = col['Area']
+#         production_f = col['Production'] if col['Production']!=None else 'NA'
+#         crop_i, isCreated = CropState.objects.get_or_create(stateName=state_name,districtName=district_name,cropYear=crop_year,season=season_f,crop=crop_f,area=area_f,production=production_f)
+#         if(isCreated):
+#             crop_i.save()
+
+#     return HttpResponse("Data Push successfully")
+    
+
+def showCropStateWise(request):
+    df=pd.read_csv("D:\\MajorProject\\State-Wise\crop_production.csv")
+    df.dropna(subset=["Production"],axis=0,inplace=True)
+    opState = df.State_Name.unique()
+    opDistrict = df.District_Name.unique()
+    opYear = df.Crop_Year.unique()
+    opSeason = df.Season.unique()
+    if request.method=="POST":
+        state=request.POST["state"]
+        district=request.POST["district"]
+        year=request.POST["year"]
+        season=request.POST["season"]
+        myData = CropState.objects.filter(stateName__contains=state, districtName__contains=district, cropYear__contains=year, season__contains=season)
+        # myData=list(myData)
+        print("--------------------->",myData)
+        crops=set()
+        for d in myData:
+            crops.add(d.crop)
+
+        print("--------------------->",crops)
+        return render(request,"crop-year-state-wise.html",{"crops":crops,"stateDef":state,"districtDef":district,"yearDef":year,"seasonDef":season,"states":opState,"districts":opDistrict,"years":opYear,"seasons":opSeason})
+    # print(crops)
+    return render(request,"crop-year-state-wise.html",{"states":opState,"districts":opDistrict,"years":opYear,"seasons":opSeason})
+

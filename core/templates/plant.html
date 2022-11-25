@@ -46,12 +46,14 @@
         <div class="container">
             {% if ans %}
             <div class="alert alert-success" role="alert">
-                <h4 class="alert-heading">{{ans}}</h4>
-                <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit
-                    longer so
-                    that you can see how spacing within an alert works with this kind of content.</p>
-                <hr>
-                <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>
+                <h1 class="alert-heading">Disease name: {{ans}}</h1>
+                <hr><br>
+                <h3>Below are some of the useful link to read about this disease and prevent this from happening</h3>
+                {% if searchData %}
+                {% for link in searchData %}
+                <a href="{{link}}">{{link | slice:":50"}}</a> <br>
+                {% endfor %}
+                {% endif %}
             </div>
             {% endif %}
             <h1 class="card-header text-center mb">Welcome to Plant Disease Detection System</h1>
