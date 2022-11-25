@@ -190,6 +190,8 @@ cython_debug/
 # Ignore all local history of files
 .history
 .ionide
+my-image.jpeg
+.google-cookie
 
 ### Windows ###
 # Windows thumbnail cache files
