@@ -34,6 +34,12 @@
     <link rel="stylesheet"
         href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css' %}"
         media="screen">
+    <style>
+        .nice-select.open .list {
+            height: 60vh;
+            overflow-y: scroll;
+        }
+    </style>
 </head>
 <!-- body -->
 
@@ -49,10 +55,11 @@
                     style="display: flex; flex-direction:column;justify-content: space-around; width: 100%;">
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect">Please Select the State</label>
-                        <select class="mr-sm-2" id="inlineFormCustomSelect"
-                            style="width:100%; height: 10vh; overflow-y: scroll;" name="state">
+                        <select class="mr-sm-2 select-option" id="inlineFormCustomSelect" name="state">
                             {% if stateDef %}
                             <option value={{stateDef}}>{{stateDef|capfirst}}</option>
+                            {% else %}
+                            <option value="na">NA</option>
                             {% endif %}
                             {% for state in states %}
                             <option value={{state}}>{{state|capfirst}}</option>
@@ -62,9 +69,12 @@
                     <br>
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect1">Please Select the District</label>
-                        <select class="mr-sm-2" id="inlineFormCustomSelect1" style="width:100%" name="district">
+                        <select class="mr-sm-2 select-option" id="inlineFormCustomSelect1" style="width:100%"
+                            name="district">
                             {% if districtDef %}
                             <option value={{districtDef}}>{{districtDef|capfirst}}</option>
+                            {% else %}
+                            <option value="na">NA</option>
                             {% endif %}
                             {% for district in districts %}
                             <option value={{district}}>{{district|capfirst}}</option>
@@ -74,9 +84,12 @@
                     <br>
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect2">Please Select the Year</label>
-                        <select class="mr-sm-2" id="inlineFormCustomSelect2" style="width:100%" name="year">
+                        <select class="mr-sm-2 select-option" id="inlineFormCustomSelect2" style="width:100%"
+                            name="year">
                             {% if yearDef %}
                             <option value={{yearDef}}>{{yearDef|capfirst}}</option>
+                            {% else %}
+                            <option value="na">NA</option>
                             {% endif %}
                             {% for year in years %}
                             <option value={{year}}>{{year|capfirst}}</option>
@@ -86,9 +99,12 @@
                     <br>
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect3">Please Select the Season</label>
-                        <select class="mr-sm-2" id="inlineFormCustomSelect3" style="width:100%" name="season">
+                        <select class="mr-sm-2 select-option" id="inlineFormCustomSelect3" style="width:100%"
+                            name="season">
                             {% if seasonDef %}
                             <option value={{seasonDef}}>{{seasonDef|capfirst}}</option>
+                            {% else %}
+                            <option value="na">NA</option>
                             {% endif %}
                             {% for season in seasons %}
                             <option value={{season}}>{{season|capfirst}}</option>
