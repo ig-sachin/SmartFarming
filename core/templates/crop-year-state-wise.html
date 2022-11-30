@@ -62,7 +62,7 @@
         ol.gradient-list {
             counter-reset: gradient-counter;
             list-style: none;
-            margin: 1.75rem 0;
+            /* margin: 1.75rem 0; */
             padding-left: 1rem;
         }
 
@@ -160,13 +160,19 @@
                     style="display: flex; flex-direction:column;justify-content: space-around; width: 100%;">
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect">Please Select the State</label>
-                        <select class="mr-sm-2 select-option" style="display: block;" name="state" id="state"></select>
+                        <select class="mr-sm-2 select-option" style="display: block;" name="state" id="state">
+                            {% if stateDef != "NA" %}
+                            <option value="{{stateDef}}" selected>{{stateDef}}</option>
+                            {% endif %}
+                        </select>
                     </div>
                     <br>
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect1">Please Select the District</label>
                         <select class="mr-sm-2 select-option" style="display: block;" name="district" id="district">
-                            <option value="NA" selected>NA</option>
+                            {% if districtDef != "NA" %}
+                            <option value="{{districtDef}}" selected>{{districtDef}}</option>
+                            {% endif %}
                         </select>
                     </div>
                     <br>
@@ -174,7 +180,11 @@
                         <label for="inlineFormCustomSelect2">Please Select the Year</label>
                         <select class="mr-sm-2 select-option" id="inlineFormCustomSelect2" style="width:100%"
                             name="year">
+                            {% if yearDef != "NA" %}
+                            <option value="{{yearDef}}" selected>{{yearDef}}</option>
+                            {% else %}
                             <option value="NA" selected>NA</option>
+                            {% endif %}
                             {% for year in years %}
                             <option value={{year}}>{{year|capfirst}}</option>
                             {% endfor %}
@@ -185,7 +195,11 @@
                         <label for="inlineFormCustomSelect3">Please Select the Season</label>
                         <select class="mr-sm-2 select-option" id="inlineFormCustomSelect3" style="width:100%"
                             name="season">
+                            {% if seasonDef != "NA" %}
+                            <option value="{{seasonDef}}" selected>{{seasonDef}}</option>
+                            {% else %}
                             <option value="NA" selected>NA</option>
+                            {% endif %}
                             {% for season in seasons %}
                             <option value={{season}}>{{season|capfirst}}</option>
                             {% endfor %}
@@ -196,14 +210,79 @@
                 </div>
             </form>
         </div>
-        <ol class="gradient-list"
-            style="display: grid; grid-template-columns: auto auto auto auto auto; padding: 2rem; ">
-            {% if crops %}
-            {% for crop in crops %}
-            <li style="margin-right: 1rem;">{{crop}}</li>
-            {% endfor %}
+        <br>
+        <h1 style="text-align: center;">Below are results for
+            {% if stateDef != "NA" %}
+            {{stateDef}}
             {% endif %}
-        </ol>
+            {% if districtDef != "NA" %}
+            {{districtDef}}
+            {% endif %}
+            {% if yearDef != "NA" %}
+            {{yearDef}}
+            {% endif %}
+            {% if seasonDef != "NA" %}
+            {{seasonDef}}
+            {% endif %}
+        </h1>
+        <br>
+        <h2 style="text-align: center;">Overall Most Crop Yield</h4>
+            <div style="margin: 1rem; display: flex; justify-content: center; align-items: center;">
+                <img src="{{ BASIC_DIR }}/static/images/figures/Overall.png" alt="image">
+            </div>
+            <br><br>
+            <h2 style="text-align: center;">Year-Wise Crop Yield </h4>
+                <div
+                    style="display: grid; grid-template-columns: auto auto auto; width: 100%; margin: auto; justify-content: center; align-items: center;">
+                    {% if totalYearCount %}
+                    {% for cnt in totalYearCount %}
+                    <div style="margin: 1rem;">
+                        <img src="{{ BASIC_DIR }}/static/images/figures/fig{{cnt}}.png" alt="image">
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <ol class="gradient-list"
+                    style="display: grid; grid-template-columns: auto auto auto auto auto; padding: 2rem; ">
+                    {% if crops %}
+                    {% for crop in crops %}
+                    <li style="margin-right: 2rem;">{{crop}}</li>
+                    {% endfor %}
+                    {% endif %}
+                </ol>
+                {% if crops %}
+                <div style="width:100%; padding: 0 4rem;">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">State</th>
+                                <th scope="col">District</th>
+                                <th scope="col">Crop Year</th>
+                                <th scope="col">Season</th>
+                                <th scope="col">Area</th>
+                                <th scope="col">Production</th>
+                                <th scope="col">Crop</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in myData %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{data.stateName}}</td>
+                                <td>{{data.districtName}}</td>
+                                <td>{{data.cropYear}}</td>
+                                <td>{{data.season}}</td>
+                                <td>{{data.crop}}</td>
+                                <td>{{data.area}}</td>
+                                <td>{{data.production}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
     </div>
 
     {% include 'language.html' %}

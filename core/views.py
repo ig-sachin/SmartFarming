@@ -13,6 +13,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import os
+from matplotlib.pyplot import figure
 
 # Create your views here.
 
@@ -259,31 +261,17 @@ def cropStateWise(request):
         print("----------------------> ",states)
         return render(request,'crop-state-wise.html',{"states":states,"crop":crop})
     return render(request,'crop-state-wise.html',{})
-
-# def pushCropData(request):
-#     # D:\\MajorProject\\State-Wise\\crop_production.csv
-#     df=pd.read_csv("D:\\MajorProject\\State-Wise\crop_production.csv")
-#     df.dropna(subset=["Production"],axis=0,inplace=True)
-#     for _,col in df.iterrows():
-#         state_name = col['State_Name'] 
-#         district_name = col['District_Name']
-#         crop_year = col['Crop_Year']
-#         season_f = col['Season']
-#         crop_f = col['Crop']
-#         area_f = col['Area']
-#         production_f = col['Production'] if col['Production']!=None else 'NA'
-#         crop_i, isCreated = CropState.objects.get_or_create(stateName=state_name,districtName=district_name,cropYear=crop_year,season=season_f,crop=crop_f,area=area_f,production=production_f)
-#         if(isCreated):
-#             crop_i.save()
-
-#     return HttpResponse("Data Push successfully")
     
 
 def showCropStateWise(request):
+    dir_name = "D:\\SEM7\\MajorProject\\SmartFarming\\static\\images\\figures\\"
+    plt.rcParams["savefig.directory"] = os.chdir(os.path.dirname(dir_name))
     df=pd.read_csv("D:\\MajorProject\\State-Wise\crop_production.csv")
+    figure(figsize=(12, 10), dpi=80)
     df.dropna(subset=["Production"],axis=0,inplace=True)
     opYear = df.Crop_Year.unique()
     opSeason = df.Season.unique()
+    colors = ["#10bf98","#000a0c","#27f55f","#0e0624","#1b8396","#83f393","#9cecef","#e1b17f","#e9e08c","#88b5e7","#7d7768","#2b20da","#dcbb36","#74f4dc","#e0a29b"]
     if request.method=="POST":
         s=request.POST["state"]
         try:
@@ -345,12 +333,68 @@ def showCropStateWise(request):
             myData = CropState.objects.filter(stateName__contains=s, districtName__contains=d, cropYear__contains=y, season__contains=sea)
         # myData=list(myData)
         # print("--------------------->",myData)
+        yearWiseCrop = {}
+        wholeCropCount = {}
+        for data in myData:
+            if data.cropYear not in yearWiseCrop:
+                yearWiseCrop[data.cropYear] = []
+            yearWiseCrop[data.cropYear].append(data.crop)
+        # print(yearWiseCrop)
+        figCnt=0
+        for year in yearWiseCrop.keys():
+            cropList = yearWiseCrop[year] 
+            cropCount = {} # Crop vs Count Map for particular year
+            for c in cropList:
+                if c not in wholeCropCount:
+                    wholeCropCount[c]=0
+                wholeCropCount[c]+=1
+                if c not in cropCount:
+                    cropCount[c]=0
+                cropCount[c]+=1
+
+            labels=[]
+            sizes=[]
+            maxLabels = 0
+            for crop,cropCnt in sorted(cropCount.items(),key=lambda x: x[1], reverse=True):
+                maxLabels+=1
+                if maxLabels>12:
+                    break
+                labels.append(crop)
+                sizes.append(cropCnt)
+            fig, axe = plt.subplots()
+            axe.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+            axe.axis('equal')
+            plt.legend(labels, loc="upper right",  fontsize = '5')
+            plt.title(f"For Year {year}", loc="left")
+            plt.tight_layout()
+            plt.savefig(f'fig{figCnt}')
+            figCnt+=1
+
+        labels=[]
+        sizes=[]
+        maxLabels = 0
+        for crop,cropCnt in sorted(wholeCropCount.items(),key=lambda x: x[1], reverse=True):
+            maxLabels+=1
+            if maxLabels>12:
+                break
+            labels.append(crop)
+            sizes.append(cropCnt)
+
+        fig, axe = plt.subplots()
+        axe.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+        axe.axis('equal')
+        plt.legend(labels, loc="upper right",  fontsize = '5')
+        plt.title(f"Overall", loc="left")
+        plt.tight_layout()
+        plt.savefig("Overall")
+
+        totalYearCount=range(len(yearWiseCrop))
         crops=set()
-        for d in myData:
-            crops.add(d.crop)
+        for dd in myData:
+            crops.add(dd.crop)
 
         # print("--------------------->",crops)
-        return render(request,"crop-year-state-wise.html",{"crops":crops,"stateDef":s,"districtDef":d,"yearDef":y,"seasonDef":s,"years":opYear,"seasons":opSeason})
+        return render(request,"crop-year-state-wise.html",{"crops":crops,"stateDef":s,"districtDef":d,"yearDef":y,"seasonDef":sea,"years":opYear,"seasons":opSeason,"totalYearCount":totalYearCount,"myData":myData})
     # print(crops)
     return render(request,"crop-year-state-wise.html",{"years":opYear,"seasons":opSeason})
 
