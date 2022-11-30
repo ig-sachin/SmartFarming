@@ -282,24 +282,75 @@ def cropStateWise(request):
 def showCropStateWise(request):
     df=pd.read_csv("D:\\MajorProject\\State-Wise\crop_production.csv")
     df.dropna(subset=["Production"],axis=0,inplace=True)
-    opState = df.State_Name.unique()
-    opDistrict = df.District_Name.unique()
     opYear = df.Crop_Year.unique()
     opSeason = df.Season.unique()
     if request.method=="POST":
-        state=request.POST["state"]
-        district=request.POST["district"]
-        year=request.POST["year"]
-        season=request.POST["season"]
-        myData = CropState.objects.filter(stateName__contains=state, districtName__contains=district, cropYear__contains=year, season__contains=season)
+        s=request.POST["state"]
+        try:
+            d=request.POST["district"]
+        except MultiValueDictKeyError:
+            d="NA"
+        y=request.POST["year"]
+        sea=request.POST["season"]
+        print("---------------------->",s,d,y,sea)
+        if s=="NA" and y=="NA" and d=="NA" and sea=="NA":
+            print("-----------------------14")
+            myData = CropState.objects.all()
+
+        elif s=="NA" and d=="NA" and y=="NA":
+            print("-----------------------11")
+            myData = CropState.objects.filter(season__contains=sea)
+        elif s=="NA" and y=="NA" and sea=="NA":
+            print("-----------------------12")
+            myData = CropState.objects.filter(districtName__contains=d)
+        elif y=="NA" and d=="NA" and sea=="NA":
+            print("-----------------------13")
+            myData = CropState.objects.filter(stateName__contains=s)
+
+        elif s=="NA" and d=="NA":
+            print("-----------------------5")
+            myData = CropState.objects.filter(cropYear__contains=y, season__contains=sea)
+        elif s=="NA" and y=="NA":
+            print("-----------------------6")
+            myData = CropState.objects.filter( districtName__contains=d, season__contains=sea)
+        elif s=="NA" and sea=="NA":
+            print("-----------------------7")
+            myData = CropState.objects.filter(districtName__contains=d, cropYear__contains=y)
+        elif d=="NA" and y=="NA":
+            print("-----------------------8")
+            myData = CropState.objects.filter(stateName__contains=s, season__contains=sea)
+        elif d=="NA" and sea=="NA":
+            print("-----------------------9")
+            myData = CropState.objects.filter(stateName__contains=s, cropYear__contains=y)
+        elif y=="NA" and sea=="NA":
+            print("-----------------------10")
+            myData = CropState.objects.filter(stateName__contains=s, districtName__contains=d)
+
+        elif s=="NA":
+            print("-----------------------1")
+            myData = CropState.objects.filter(districtName__contains=d, cropYear__contains=y, season__contains=sea)
+        elif d=="NA":
+            print("-----------------------2")
+            myData = CropState.objects.filter(stateName__contains=s, cropYear__contains=y, season__contains=sea)
+        elif y=="NA":
+            print("-----------------------3")
+            myData = CropState.objects.filter(stateName__contains=s, districtName__contains=d, season__contains=sea)
+        elif sea=="NA":
+            print("-----------------------4")
+            myData = CropState.objects.filter(stateName__contains=s, districtName__contains=d, cropYear__contains=y)
+
+        else:
+            print("-----------------------15")
+            
+            myData = CropState.objects.filter(stateName__contains=s, districtName__contains=d, cropYear__contains=y, season__contains=sea)
         # myData=list(myData)
-        print("--------------------->",myData)
+        # print("--------------------->",myData)
         crops=set()
         for d in myData:
             crops.add(d.crop)
 
-        print("--------------------->",crops)
-        return render(request,"crop-year-state-wise.html",{"crops":crops,"stateDef":state,"districtDef":district,"yearDef":year,"seasonDef":season,"states":opState,"districts":opDistrict,"years":opYear,"seasons":opSeason})
+        # print("--------------------->",crops)
+        return render(request,"crop-year-state-wise.html",{"crops":crops,"stateDef":s,"districtDef":d,"yearDef":y,"seasonDef":s,"years":opYear,"seasons":opSeason})
     # print(crops)
-    return render(request,"crop-year-state-wise.html",{"states":opState,"districts":opDistrict,"years":opYear,"seasons":opSeason})
+    return render(request,"crop-year-state-wise.html",{"years":opYear,"seasons":opSeason})
 

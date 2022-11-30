@@ -35,11 +35,116 @@
         href="{% static 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css' %}"
         media="screen">
     <style>
+        @import url(https://fonts.googleapis.com/css?family=Montserrat:900|Raleway:400,400i,700,700i);
+
         .nice-select.open .list {
             height: 60vh;
             overflow-y: scroll;
         }
+
+        .select-option {
+            display: block !important;
+            width: 600px !important;
+            height: 46px;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .nice-select {
+            display: none !important;
+        }
+
+        ol.gradient-list>li,
+        ol.gradient-list>li::before {
+            box-shadow: 0.25rem 0.25rem 0.6rem rgba(0, 0, 0, 0.05), 0 0.5rem 1.125rem rgba(75, 0, 0, 0.05);
+        }
+
+        ol.gradient-list {
+            counter-reset: gradient-counter;
+            list-style: none;
+            margin: 1.75rem 0;
+            padding-left: 1rem;
+        }
+
+        ol.gradient-list>li {
+            background: white;
+            border-radius: 0 0.5rem 0.5rem 0.5rem;
+            counter-increment: gradient-counter;
+            margin-top: 1rem;
+            min-height: 3rem;
+            padding: 1rem 1rem 1rem 3rem;
+            position: relative;
+        }
+
+        ol.gradient-list>li::before,
+        ol.gradient-list>li::after {
+            background: linear-gradient(135deg, #83e4e2 0%, #a2ed56 100%);
+            border-radius: 1rem 1rem 0 1rem;
+            content: '';
+            height: 3rem;
+            left: -1rem;
+            overflow: hidden;
+            position: absolute;
+            top: -1rem;
+            width: 3rem;
+        }
+
+        ol.gradient-list>li::before {
+            align-items: flex-end;
+            content: counter(gradient-counter);
+            color: #1d1f20;
+            display: flex;
+            font: 900 1.5em/1 'Montserrat';
+            justify-content: flex-end;
+            padding: 0.125em 0.25em;
+            z-index: 1;
+        }
+
+        ol.gradient-list>li:nth-child(10n+1):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.2) 0%, rgba(253, 220, 50, 0.2) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+2):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.4) 0%, rgba(253, 220, 50, 0.4) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+3):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.6) 0%, rgba(253, 220, 50, 0.6) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+4):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.8) 0%, rgba(253, 220, 50, 0.8) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+5):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 1) 0%, rgba(253, 220, 50, 1) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+6):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.8) 0%, rgba(253, 220, 50, 0.8) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+7):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.6) 0%, rgba(253, 220, 50, 0.6) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+8):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.4) 0%, rgba(253, 220, 50, 0.4) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+9):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0.2) 0%, rgba(253, 220, 50, 0.2) 100%);
+        }
+
+        ol.gradient-list>li:nth-child(10n+10):before {
+            background: linear-gradient(135deg, rgba(162, 237, 86, 0) 0%, rgba(253, 220, 50, 0) 100%);
+        }
+
+        ol.gradient-list>li+li {
+            margin-top: 2rem;
+        }
     </style>
+    <script type="text/javascript" src='{% static "js/countries.js" %}'></script>
 </head>
 <!-- body -->
 
@@ -47,7 +152,7 @@
     {% include 'header.html' %}
     <div class="jumbotron jumbotron-fluid my-jumbo">
         <div class="container">
-            <h1 class="card-header text-center mb">Welcome to Crop Recommendation State Wise</h1>
+            <h1 class="card-header text-center mb">Get Crop Prediction State, District, Year and Season wise</h1>
             <form action="/crop-year-state-wise" method="POST" class="my-crop-form"
                 style="display: flex; justify-content:center; flex-direction: row;">
                 {% csrf_token %}
@@ -55,30 +160,13 @@
                     style="display: flex; flex-direction:column;justify-content: space-around; width: 100%;">
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect">Please Select the State</label>
-                        <select class="mr-sm-2 select-option" id="inlineFormCustomSelect" name="state">
-                            {% if stateDef %}
-                            <option value={{stateDef}}>{{stateDef|capfirst}}</option>
-                            {% else %}
-                            <option value="na">NA</option>
-                            {% endif %}
-                            {% for state in states %}
-                            <option value={{state}}>{{state|capfirst}}</option>
-                            {% endfor %}
-                        </select>
+                        <select class="mr-sm-2 select-option" style="display: block;" name="state" id="state"></select>
                     </div>
                     <br>
                     <div style="display: flex; justify-content: space-between;">
                         <label for="inlineFormCustomSelect1">Please Select the District</label>
-                        <select class="mr-sm-2 select-option" id="inlineFormCustomSelect1" style="width:100%"
-                            name="district">
-                            {% if districtDef %}
-                            <option value={{districtDef}}>{{districtDef|capfirst}}</option>
-                            {% else %}
-                            <option value="na">NA</option>
-                            {% endif %}
-                            {% for district in districts %}
-                            <option value={{district}}>{{district|capfirst}}</option>
-                            {% endfor %}
+                        <select class="mr-sm-2 select-option" style="display: block;" name="district" id="district">
+                            <option value="NA" selected>NA</option>
                         </select>
                     </div>
                     <br>
@@ -86,11 +174,7 @@
                         <label for="inlineFormCustomSelect2">Please Select the Year</label>
                         <select class="mr-sm-2 select-option" id="inlineFormCustomSelect2" style="width:100%"
                             name="year">
-                            {% if yearDef %}
-                            <option value={{yearDef}}>{{yearDef|capfirst}}</option>
-                            {% else %}
-                            <option value="na">NA</option>
-                            {% endif %}
+                            <option value="NA" selected>NA</option>
                             {% for year in years %}
                             <option value={{year}}>{{year|capfirst}}</option>
                             {% endfor %}
@@ -101,11 +185,7 @@
                         <label for="inlineFormCustomSelect3">Please Select the Season</label>
                         <select class="mr-sm-2 select-option" id="inlineFormCustomSelect3" style="width:100%"
                             name="season">
-                            {% if seasonDef %}
-                            <option value={{seasonDef}}>{{seasonDef|capfirst}}</option>
-                            {% else %}
-                            <option value="na">NA</option>
-                            {% endif %}
+                            <option value="NA" selected>NA</option>
                             {% for season in seasons %}
                             <option value={{season}}>{{season|capfirst}}</option>
                             {% endfor %}
@@ -116,16 +196,25 @@
                 </div>
             </form>
         </div>
+        <ol class="gradient-list"
+            style="display: grid; grid-template-columns: auto auto auto auto auto; padding: 2rem; ">
+            {% if crops %}
+            {% for crop in crops %}
+            <li style="margin-right: 1rem;">{{crop}}</li>
+            {% endfor %}
+            {% endif %}
+        </ol>
     </div>
 
+    {% include 'language.html' %}
     <div class="copyright">
         <div class="container">
             <p>©2022 All Rights Reserved. Design By <a href="http://localhost:8000/">Sachin, Aartee, Dhananjay</a>
             </p>
         </div>
     </div>
-    {% include 'language.html' %}
     <!-- Javascript files-->
+
     <script src='{% static "js/jquery.min.js" %}'></script>
     <script src='{% static "js/popper.min.js" %}'></script>
     <script src='{% static "js/bootstrap.bundle.min.js" %}'></script>
@@ -137,6 +226,11 @@
     <!-- javascript -->
     <script src='{% static "js/owl.carousel.js" %}'></script>
     <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+    <script language="javascript">
+        populateCountries("state", "district");
+        populateCountries("country2");
+        populateCountries("country2");
+    </script>
 </body>
 
 </html>

@@ -192,6 +192,7 @@ cython_debug/
 .ionide
 my-image.jpeg
 .google-cookie
+temp.html
 
 ### Windows ###
 # Windows thumbnail cache files
